@@ -1,13 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const questionRoutes = require('./Routes/questionRoutes');
+const summaryRoutes = require('./Routes/summaryRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 8082;
 
 app.use(cors());
 app.use(express.json());
-app.use('/questions',  questionRoutes);
+app.use('/questions', questionRoutes);
+app.use('/summary', summaryRoutes);
 
 
 try {

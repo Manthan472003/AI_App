@@ -5,7 +5,7 @@ import FinalSummary from './src/Components/FinalSummary';
 import Home from './src/Components/Home';
 import Questions from './src/Components/Questions';
 import React from 'react';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 const Stack = createStackNavigator();
 

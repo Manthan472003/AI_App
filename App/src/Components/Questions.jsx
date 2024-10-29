@@ -1,13 +1,15 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useRoute } from '@react-navigation/native'; // Import useRoute to access navigation params
-// import questionsData from './relatedQuestions.json';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllQuestions } from '../Services/QuestionServices';
+import { saveSummary } from '../Services/SummaryServices';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+
 
 const Questions = () => {
-  const route = useRoute(); // Get the route object
-  const { name: patientName, age: patientAge } = route.params; // Extract patient name and age
+  const route = useRoute();
+  const { name: patientName, age: patientAge } = route.params;
 
   const [initialQuestionAnswered, setInitialQuestionAnswered] = useState(false);
   const [secondQuestionAnswered, setSecondQuestionAnswered] = useState(false);
@@ -18,27 +20,14 @@ const Questions = () => {
   const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [relatedQuestionIndex, setRelatedQuestionIndex] = useState(0);
   const [questionsData, setQuestionsData] = useState([]);
+  const navigation = useNavigation(); // Initialize navigation
+
 
   const initialQuestion = "आपण काय कारणासाठी भेटत आहात?";
-  const initialOptions = [
-    "नवीन जन्मलेले बाळ",
-    "चांगले मूल",
-    "लसीकरण",
-    "पाठपुरावा",
-    "नियोजित भेट",
-  ];
-
+  const initialOptions = ["नवीन जन्मलेले बाळ", "चांगले मूल", "लसीकरण", "पाठपुरावा", "नियोजित भेट"];
   const secondQuestion = "आपण कोणत्या कारणामुळे ग्रस्त आहात?";
-  const secondOptions = [
-    "ताप",
-    "खोकला",
-    "सर्दी",
-    "खोकला आणि सर्दी",
-    "छाती दुखणे",
-    "संडास लागणे",
-  ];
+  const secondOptions = ["ताप", "खोकला", "सर्दी", "खोकला आणि सर्दी", "छाती दुखणे", "संडास लागणे"];
 
-// Fetch questions from backend wrapped in useCallback
   const fetchQuestions = useCallback(async () => {
     const response = await getAllQuestions();
     setQuestionsData(response.data);
@@ -60,6 +49,49 @@ const Questions = () => {
     const relatedQuestions = questionsData.filter(question => question.main_question === option);
     setFilteredQuestions(relatedQuestions);
     setCurrentQuestionIndex(0);
+  };
+
+  const handleOptionSelect = (option) => {
+    const newResponses = [...responses, { question: currentSubQuestion.sub_question, answer: option }];
+    setResponses(newResponses);
+
+    const selectedOption = currentSubQuestion.options.find(opt => typeof opt === 'object' && opt.option === option);
+
+    if (selectedOption && selectedOption.related_questions) {
+      setRelatedQuestions(selectedOption.related_questions);
+      setRelatedQuestionIndex(0);
+      setCurrentSubQuestionIndex(0);
+    } else {
+      setCurrentSubQuestionIndex(prev => prev + 1);
+    }
+
+    if (currentSubQuestionIndex + 1 >= currentQuestion.sub_questions.length) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentSubQuestionIndex(0);
+      setRelatedQuestions([]);
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const selectedPatientId = await AsyncStorage.getItem('selectedPatientId');
+      if (!selectedPatientId) {
+        Alert.alert("Error", "Patient ID not found.");
+        return;
+      }
+
+      const summary = responses.map(response => response.answer).join(', ');
+      await saveSummary({
+        patientId: selectedPatientId,
+        summary,
+      });
+      navigation.navigate('Home');
+
+      Alert.alert("Success", "Summary saved successfully.");
+    } catch (error) {
+      Alert.alert("Error", "An error occurred while saving the summary.");
+      console.error("Save summary error:", error);
+    }
   };
 
   if (!initialQuestionAnswered) {
@@ -97,6 +129,7 @@ const Questions = () => {
   }
 
   const currentQuestion = filteredQuestions[currentQuestionIndex];
+  const currentSubQuestion = currentQuestion?.sub_questions[currentSubQuestionIndex];
   const allQuestionsAnswered = currentQuestionIndex >= filteredQuestions.length && relatedQuestionIndex >= relatedQuestions.length;
 
   if (allQuestionsAnswered) {
@@ -112,33 +145,13 @@ const Questions = () => {
               <Text style={styles.answerText}>{response.answer}</Text>
             </View>
           ))}
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     );
   }
-
-  const currentSubQuestion = currentQuestion?.sub_questions[currentSubQuestionIndex];
-
-  const handleOptionSelect = (option) => {
-    const newResponses = [...responses, { question: currentSubQuestion.sub_question, answer: option }];
-    setResponses(newResponses);
-
-    const selectedOption = currentSubQuestion.options.find(opt => typeof opt === 'object' && opt.option === option);
-
-    if (selectedOption && selectedOption.related_questions) {
-      setRelatedQuestions(selectedOption.related_questions);
-      setRelatedQuestionIndex(0);
-      setCurrentSubQuestionIndex(0);
-    } else {
-      setCurrentSubQuestionIndex(prev => prev + 1);
-    }
-
-    if (currentSubQuestionIndex + 1 >= currentQuestion.sub_questions.length) {
-      setCurrentQuestionIndex(prev => prev + 1);
-      setCurrentSubQuestionIndex(0);
-      setRelatedQuestions([]);
-    }
-  };
 
   const renderCurrentSubQuestion = () => (
     <View style={styles.questionCard}>
@@ -266,6 +279,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#00796B',
     textAlign: 'center',
+  },
+  submitButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 8,
+    width: '100%',
+    alignItems: 'center',
   },
 });
 
