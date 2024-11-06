@@ -2,9 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAllQuestions } from '../Services/QuestionServices';
-import { saveSummary } from '../Services/SummaryServices';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import questionsData from './relatedQuestions.json';
 
 
 const Questions = () => {
@@ -19,7 +18,6 @@ const Questions = () => {
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [relatedQuestionIndex, setRelatedQuestionIndex] = useState(0);
-  const [questionsData, setQuestionsData] = useState([]);
   const navigation = useNavigation(); // Initialize navigation
 
 
@@ -28,14 +26,6 @@ const Questions = () => {
   const secondQuestion = "आपण कोणत्या कारणामुळे ग्रस्त आहात?";
   const secondOptions = ["ताप", "खोकला", "सर्दी", "खोकला आणि सर्दी", "छाती दुखणे", "संडास लागणे"];
 
-  const fetchQuestions = useCallback(async () => {
-    const response = await getAllQuestions();
-    setQuestionsData(response.data);
-  }, []);
-
-  useEffect(() => {
-    fetchQuestions();
-  }, [fetchQuestions]);
 
   const handleInitialOptionSelect = (option) => {
     setResponses((prev) => [...prev, { question: initialQuestion, answer: option }]);
@@ -79,20 +69,51 @@ const Questions = () => {
         Alert.alert("Error", "Patient ID not found.");
         return;
       }
-
+  
+      // Prepare the summary data
       const summary = responses.map(response => response.answer).join(', ');
-      await saveSummary({
+  
+      // Retrieve existing summaries from AsyncStorage or initialize an empty array
+      const existingSummaries = await AsyncStorage.getItem('patientSummaries');
+      const summariesArray = existingSummaries ? JSON.parse(existingSummaries) : [];
+  
+      // Add the new summary entry
+      summariesArray.push({
         patientId: selectedPatientId,
         summary,
+        date: new Date().toISOString(), // Add a timestamp for reference
       });
-      navigation.navigate('Home');
+  
+      // Store the updated array back in AsyncStorage
+      await AsyncStorage.setItem('patientSummaries', JSON.stringify(summariesArray));
 
+      fetchSummaries();
+
+  
+      navigation.navigate('Home');
+  
       Alert.alert("Success", "Summary saved successfully.");
     } catch (error) {
       Alert.alert("Error", "An error occurred while saving the summary.");
       console.error("Save summary error:", error);
     }
   };
+  
+
+  const fetchSummaries = async () => {
+    try {
+      const storedSummaries = await AsyncStorage.getItem('patientSummaries');
+      if (storedSummaries) {
+        const summariesArray = JSON.parse(storedSummaries);
+        console.log('Stored Summaries:', summariesArray);
+      } else {
+        console.log('No summaries found');
+      }
+    } catch (error) {
+      console.error('Error fetching summaries:', error);
+    }
+  };
+
 
   if (!initialQuestionAnswered) {
     return (
@@ -136,7 +157,7 @@ const Questions = () => {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>सारांश</Text>
+          <Text style={styles.summaryTitle}>Summary</Text>
           <Text style={styles.patientInfo}>पेशंटचे नाव : <Text style={styles.highlight}>{patientName}</Text></Text>
           <Text style={styles.patientInfo}>पेशंटचे वय : <Text style={styles.highlight}>{patientAge}</Text></Text>
           {responses.map((response, index) => (

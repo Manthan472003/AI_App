@@ -1,18 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import patientsData from './patients.json'; // Adjust the path based on your structure
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import patientsData from './patients.json';
+import { useNavigation } from '@react-navigation/native';
 
 const Home = () => {
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [patients, setPatients] = useState([]);
-    const navigation = useNavigation(); // Initialize navigation
+    const [patientSummaries, setPatientSummaries] = useState([]);
+    const navigation = useNavigation();
 
     useEffect(() => {
         setPatients(patientsData);
     }, []);
+
+    useEffect(() => {
+        if (selectedPatient) {
+            fetchPatientSummaries(selectedPatient.id);
+        }
+    }, [selectedPatient]);
+
+    const fetchPatientSummaries = async (patientId) => {
+        try {
+            const storedSummaries = await AsyncStorage.getItem('patientSummaries');
+            const summariesArray = storedSummaries ? JSON.parse(storedSummaries) : [];
+            const filteredSummaries = summariesArray.filter(summary => summary.patientId === patientId);
+            setPatientSummaries(filteredSummaries);
+        } catch (error) {
+            console.error('Error fetching summaries:', error);
+        }
+    };
 
     const handlePatientChange = (value) => {
         const patient = patients.find(p => p.id === value);
@@ -21,9 +39,7 @@ const Home = () => {
 
     const handleStartPress = async () => {
         if (selectedPatient) {
-            // Store selected patient ID in AsyncStorage
             await AsyncStorage.setItem('selectedPatientId', selectedPatient.id);
-            // Navigate to Questions page, passing patientId, name, and age
             navigation.navigate('Questions', {
                 patientId: selectedPatient.id,
                 name: selectedPatient.name,
@@ -31,10 +47,9 @@ const Home = () => {
             });
         }
     };
-    
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.label}>Select Patient</Text>
             <Dropdown
                 style={styles.dropdown}
@@ -61,13 +76,33 @@ const Home = () => {
             <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
                 <Text style={styles.startButtonText}>Start</Text>
             </TouchableOpacity>
-        </View>
+
+            {/* Patient Summaries */}
+            {patientSummaries.length > 0 && (
+                <View style={styles.summaryContainer}>
+                    <Text style={styles.summaryTitle}>Patient Summary</Text>
+                    {patientSummaries.map((summary, index) => (
+                        <View key={index} style={styles.summaryCard}>
+                            <Image source={require('../Assets/share.png')} style={styles.shareIcon} />
+                            <Text style={styles.summaryText}>Date: <Text style={styles.highlight}>{new Date(summary.date).toLocaleDateString()}</Text></Text>
+                            <View style={styles.tagsContainer}>
+                                {summary.summary.split(',').map((item, idx) => (
+                                    <View key={idx} style={styles.tagBox}>
+                                        <Text style={styles.tagText}>{item.trim()}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
@@ -88,10 +123,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 8,
         elevation: 5,
@@ -115,10 +147,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E3F2FD',
         borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 6,
         elevation: 4,
@@ -146,6 +175,59 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    summaryContainer: {
+        marginTop: 30,
+        width: '100%',
+    },
+    summaryTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
+    },
+    summaryCard: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+        position: 'relative',
+    },
+    shareIcon: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        width: 24,
+        height: 24,
+        tintColor: '#3F51B5',
+    },
+    summaryText: {
+        fontSize: 16,
+        color: '#333',
+        marginBottom: 5,
+    },
+    tagsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    tagBox: {
+        backgroundColor: '#E3F2FD',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        margin: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    tagText: {
+        color: '#3F51B5',
+        fontSize: 14,
+        fontWeight: '500',
     },
 });
 
