@@ -1,119 +1,355 @@
 [
   {
-    "main_question": "ताप",
+    "main_question": {
+      "marathi": "ताप",
+      "english": "Fever",
+      "value": "fever"
+    },
     "sub_questions": [
       {
-        "sub_question": "ताप किती दिवसांपासून आलेला आहे?",
+        "sub_question": {
+          "marathi": "ताप किती दिवसांपासून आलेला आहे?",
+          "english": "How long has the fever been present?",
+          "value": "How long has the fever been present?"
+        },
         "options": [
-          "एक ते दोन दिवस",
-          "दोन ते तीन दिवस",
-          "तीन ते चार दिवस",
-          "चार ते पाच दिवस",
-          "एक आठवड्यापासून"
+          {
+            "marathi": "एक ते दोन दिवस",
+            "english": "one to two days",
+            "value": "one to two days"
+          },
+          {
+            "marathi": "दोन ते तीन दिवस",
+            "english": "two to three days",
+            "value": "two to three days"
+          },
+          {
+            "marathi": "तीन ते चार दिवस",
+            "english": "three to four days",
+            "value": "three to four days"
+          },
+          {
+            "marathi": "चार ते पाच दिवस",
+            "english": "four to five days",
+            "value": "four to five days"
+          },
+          {
+            "marathi": "एक आठवड्यापासून",
+            "english": "since a week",
+            "value": "since a week"
+          }
         ]
       },
       {
-        "sub_question": "तपा संबंधी अजुन थोडी माहिती सांगता का?",
+        "sub_question": {
+          "marathi": "तपा संबंधी अजुन थोडी माहिती सांगता का?",
+          "english": "Can you tell us a little more about the fever?",
+          "value": "Can you tell us a little more about the fever?"
+        },
         "options": [
-          "सौम्य प्रकारचा (१००°पर्यंत)",
-          "जास्त तापमान (१००°चे पुढे)",
-          "थंडी वाजत आहे",
-          "कडकपणा जाणवतो आहे",
-          "उबदार शरीर",
-          "वारंवार येत आहे",
-          "अधुन मधुन",
-          "इतर"
+          {
+            "marathi": "सौम्य प्रकारचा (१००°पर्यंत)",
+            "english": "mild (up to 100°)",
+            "value": "mild (up to 100°)"
+          },
+          {
+            "marathi": "जास्त तापमान (१००°चे पुढे)",
+            "english": "High temperature (beyond 100°)",
+            "value": "High temperature (beyond 100°)"
+          },
+          {
+            "marathi": "थंडी वाजत आहे",
+            "english": "with chills",
+            "value": "with chills"
+          },
+          {
+            "marathi": "कडकपणा जाणवतो आहे",
+            "english": "with rigors",
+            "value": "with rigors"
+          },
+          {
+            "marathi": "उबदार शरीर",
+            "english": "warm body",
+            "value": "warm body"
+          },
+          {
+            "marathi": "वारंवार येत आहे",
+            "english": "recurrent",
+            "value": "recurrent"
+          },
+          {
+            "marathi": "अधुन मधुन",
+            "english": "intermittent",
+            "value": "intermittent"
+          },
+          {
+            "marathi": "इतर",
+            "english": "other",
+            "value": "other"
+          }
         ]
       },
       {
-        "sub_question": "तापा बरोबर अजुन काही लक्षणे आहेत का?",
+        "sub_question": {
+          "marathi": "तापा बरोबर अजुन काही लक्षणे आहेत का?",
+          "english": "Are there any other symptoms along with the fever?",
+          "value": "Are there any other symptoms along with the fever?"
+        },
         "options": [
           {
-            "option": "उलटी होणे",
+            "options": {
+              "marathi": "उलटी होणे",
+              "english": "vomiting",
+              "value": "vomiting"
+            },
             "related_questions": [
               {
-                "related_question": "उलटी किती दिवसांपासून येत आहे?",
+                "related_question": {
+                  "marathi": "उलटी किती दिवसांपासून येत आहे?",
+                  "english": "How long has the vomiting been present?",
+                  "value": "How long has the vomiting been present?"
+                },
                 "related_options": [
-                  "एक ते दोन दिवस",
-                  "दोन ते तीन दिवस",
-                  "तीन ते चार दिवस"
+                  {
+                    "marathi": "एक ते दोन दिवस",
+                    "english": "one to two days",
+                    "value": "one to two days"
+                  },
+                  {
+                    "marathi": "दोन ते तीन दिवस",
+                    "english": "two to three days",
+                    "value": "two to three days"
+                  },
+                  {
+                    "marathi": "तीन ते चार दिवस",
+                    "english": "three to four days",
+                    "value": "three to four days"
+                  }
                 ]
               },
               {
-                "related_question": "उलटी बद्दल अजुन सांगू शकता का?",
+                "related_question": {
+                  "marathi": "उलटी बद्दल अजुन सांगू शकता का?",
+                  "english": "Can you tell me more about the vomiting?",
+                  "value": "Can you tell me more about the vomiting?"
+                },
                 "related_options": [
-                  "खूपच जास्त",
-                  "अधुन मधून",
-                  "थोडी थोडी",
-                  "सतत होत आहे"
+                  {
+                    "marathi": "खूपच जास्त",
+                    "english": "very high",
+                    "value": "very high"
+                  },
+                  {
+                    "marathi": "अधुन मधून",
+                    "english": "occasionally",
+                    "value": "occasionally"
+                  },
+                  {
+                    "marathi": "थोडी थोडी",
+                    "english": "little by little",
+                    "value": "little by little"
+                  },
+                  {
+                    "marathi": "सतत होत आहे",
+                    "english": "constantly",
+                    "value": "constantly"
+                  }
                 ]
               }
             ]
           },
           {
-            "option": "पुरळ येणे",
+            "options": {
+              "marathi": "पुरळ येणे",
+              "english": "rash",
+              "value": "rash"
+            },
             "related_questions": [
               {
-                "related_question": "पुरळ किती दिवस पासून येत आहे?",
+                "related_question": {
+                  "marathi": "पुरळ किती दिवस पासून येत आहे?",
+                  "english": "How long has the rash been present?",
+                  "value": "How long has the rash been present?"
+                },
                 "related_options": [
-                  "एक ते दोन दिवस",
-                  "दोन ते तीन दिवस",
-                  "तीन ते चार दिवस"
+                  {
+                    "marathi": "एक ते दोन दिवस",
+                    "english": "one to two days",
+                    "value": "one to two days"
+                  },
+                  {
+                    "marathi": "दोन ते तीन दिवस",
+                    "english": "two to three days",
+                    "value": "two to three days"
+                  },
+                  {
+                    "marathi": "तीन ते चार दिवस",
+                    "english": "three to four days",
+                    "value": "three to four days"
+                  }
                 ]
               },
               {
-                "related_question": "पुरळ कुठे येत आहे?",
+                "related_question": {
+                  "marathi": "पुरळ कुठे येत आहे?",
+                  "english": "Where is the rash appearing?",
+                  "value": "Where is the rash appearing?"
+                },
                 "related_options": [
-                  "तोंडात येत आहे",
-                  "सगळीकडे",
-                  "चेहऱ्यावर खाज सुटने",
-                  "हातावर",
-                  "पायावर"
+                  {
+                    "marathi": "तोंडात येत आहे",
+                    "english": "in the mouth",
+                    "value": "in the mouth"
+                  },
+                  {
+                    "marathi": "सगळीकडे",
+                    "english": "everywhere",
+                    "value": "everywhere"
+                  },
+                  {
+                    "marathi": "चेहऱ्यावर खाज सुटने",
+                    "english": "itching on the face",
+                    "value": "itching on the face"
+                  },
+                  {
+                    "marathi": "हातावर",
+                    "english": "on hand",
+                    "value": "on hand"
+                  },
+                  {
+                    "marathi": "पायावर",
+                    "english": "on foot",
+                    "value": "on foot"
+                  }
                 ]
               }
             ]
           },
           {
-            "option": "पोटदुखी",
+            "options": {
+              "marathi": "पोटदुखी",
+              "english": "abdominal pain",
+              "value": "abdominal pain"
+            },
             "related_questions": [
               {
-                "related_question": "पोटदुखी किती दिवसापासून होत आहे?",
+                "related_question": {
+                  "marathi": "पोटदुखी किती दिवसांपासून होत आहे?",
+                  "english": "How long has the abdominal pain been present?",
+                  "value": "How long has the abdominal pain been present?"
+                },
                 "related_options": [
-                  "एक ते दोन दिवस",
-                  "दोन ते तीन दिवस",
-                  "तीन ते चार दिवस"
+                  {
+                    "marathi": "एक ते दोन दिवस",
+                    "english": "one to two days",
+                    "value": "one to two days"
+                  },
+                  {
+                    "marathi": "दोन ते तीन दिवस",
+                    "english": "two to three days",
+                    "value": "two to three days"
+                  },
+                  {
+                    "marathi": "तीन ते चार दिवस",
+                    "english": "three to four days",
+                    "value": "three to four days"
+                  }
                 ]
               },
               {
-                "related_question": "पोटदुखी बद्दल अजून सांगु शकता का?",
+                "related_question": {
+                  "marathi": "पोटदुखी बद्दल अजून सांगु शकता का?",
+                  "english": "Can you tell me more about the abdominal pain?",
+                  "value": "Can you tell me more about the abdominal pain?"
+                },
                 "related_options": [
-                  "पूर्ण",
-                  "एक बाजूने"
+                  {
+                    "marathi": "पूर्ण",
+                    "english": "complete",
+                    "value": "complete"
+                  },
+                  {
+                    "marathi": "एक बाजूने",
+                    "english": "on one side",
+                    "value": "on one side"
+                  }
                 ]
               }
             ]
           },
           {
-            "option": "डोकेदुखी",
+            "options": {
+              "marathi": "डोकेदुखी",
+              "english": "headache",
+              "value": "headache"
+            },
             "related_questions": [
               {
-                "related_question": "डोकेदुखी हा त्रास किती दिवसापासून होत आहे?",
+                "related_question": {
+                  "marathi": "डोकेदुखी हा त्रास किती दिवसांपासून होत आहे?",
+                  "english": "How long has the headache been present?",
+                  "value": "How long has the headache been present?"
+                },
                 "related_options": [
-                  "एक ते दोन दिवस",
-                  "दोन ते तीन दिवस",
-                  "तीन ते चार दिवस"
+                  {
+                    "marathi": "एक ते दोन दिवस",
+                    "english": "one to two days",
+                    "value": "one to two days"
+                  },
+                  {
+                    "marathi": "दोन ते तीन दिवस",
+                    "english": "two to three days",
+                    "value": "two to three days"
+                  },
+                  {
+                    "marathi": "तीन ते चार दिवस",
+                    "english": "three to four days",
+                    "value": "three to four days"
+                  }
                 ]
               },
               {
-                "related_question": "डोकेदुखी बद्दल अजून सांगु शकता का?",
+                "related_question": {
+                  "marathi": "डोकेदुखी बद्दल अजून सांगु शकता का?",
+                  "english": "Can you tell me more about the headache?",
+                  "value": "Can you tell me more about the headache?"
+                },
                 "related_options": [
-                  "कायम",
-                  "वरच्या भागात",
-                  "सौम्य",
-                  "गंभीर",
-                  "फक्त कपाळ",
-                  "मागची बाजू",
-                  "बाजूने"
+                  {
+                    "marathi": "कायम",
+                    "english": "permanent",
+                    "value": "permanent"
+                  },
+                  {
+                    "marathi": "वरच्या भागात",
+                    "english": "upper part",
+                    "value": "upper part"
+                  },
+                  {
+                    "marathi": "सौम्य",
+                    "english": "mild",
+                    "value": "mild"
+                  },
+                  {
+                    "marathi": "गंभीर",
+                    "english": "serious",
+                    "value": "serious"
+                  },
+                  {
+                    "marathi": "फक्त कपाळ",
+                    "english": "forehead",
+                    "value": "forehead"
+                  },
+                  {
+                    "marathi": "मागची बाजू",
+                    "english": "back side",
+                    "value": "back side"
+                  },
+                  {
+                    "marathi": "बाजूने",
+                    "english": "from the side",
+                    "value": "from the side"
+                  }
                 ]
               }
             ]
@@ -123,43 +359,96 @@
     ]
   },
   {
-    "main_question": "खोकला",
+    "main_question": {
+      "marathi": "खोकला",
+      "english": "Cough",
+      "value": "cough"
+    },
     "sub_questions": [
       {
-        "sub_question": "खोकला किती दिवसांपासून आहे?",
+        "sub_question": {
+          "marathi": "खोकला किती दिवसांपासून येत आहे?",
+          "english": "How long has the cough been present?",
+          "value": "How long has the cough been present?"
+        },
         "options": [
-          "एक ते दोन दिवस",
-          "दोन ते तीन दिवस",
-          "तीन ते चार दिवस"
-        ]
-      },
-      {
-        "sub_question": "खोकला कसा प्रकारचा आहे?",
-        "options": [
-          "सौम्य",
-          "जास्त",
-          "सतत",
-          "कधी कधी"
+          {
+            "marathi": "एक ते दोन दिवस",
+            "english": "one to two days",
+            "value": "one to two days"
+          },
+          {
+            "marathi": "दोन ते तीन दिवस",
+            "english": "two to three days",
+            "value": "two to three days"
+          },
+          {
+            "marathi": "तीन ते चार दिवस",
+            "english": "three to four days",
+            "value": "three to four days"
+          },
+          {
+            "marathi": "चार ते पाच दिवस",
+            "english": "four to five days",
+            "value": "four to five days"
+          }
         ]
       }
     ]
   },
   {
-    "main_question": "सर्दी",
+    "main_question": {
+      "marathi": "सर्दी",
+      "english": "Cold",
+      "value": "cold"
+    },
     "sub_questions": [
       {
-        "sub_question": "सर्दी किती दिवसांपासून आहे?",
+        "sub_question": {
+          "marathi": "सर्दी किती दिवसांपासून आहे?",
+          "english": "How long has the cold been present?",
+          "value": "How long has the cold been present?"
+        },
         "options": [
-          "एक ते दोन दिवस",
-          "दोन ते तीन दिवस",
-          "तीन ते चार दिवस"
+          {
+            "marathi": "एक ते दोन दिवस",
+            "english": "one to two days",
+            "value": "one to two days"
+          },
+          {
+            "marathi": "दोन ते तीन दिवस",
+            "english": "two to three days",
+            "value": "two to three days"
+          },
+          {
+            "marathi": "तीन ते चार दिवस",
+            "english": "three to four days",
+            "value": "three to four days"
+          },
+          {
+            "marathi": "चार ते पाच दिवस",
+            "english": "four to five days",
+            "value": "four to five days"
+          }
         ]
       },
       {
-        "sub_question": "सर्दी कशी आहे?",
+        "sub_question": {
+          "marathi": "सर्दी कशी आहे?",
+          "english": "How is cold?",
+          "value": "How is cold?"
+        },
         "options": [
-          "ओली",
-          "नाकातून पाणी येत आहे"
+          {
+            "marathi": "ओली",
+            "english": "wet",
+            "value": "wet"
+          },
+          {
+            "marathi": "नाकातून पाणी येत आहे",
+            "english": "water is coming from nose",
+            "value": "water is coming from nose"
+          }
         ]
       }
     ]

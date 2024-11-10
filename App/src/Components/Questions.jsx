@@ -19,24 +19,52 @@ const Questions = () => {
   const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [relatedQuestionIndex, setRelatedQuestionIndex] = useState(0);
   const navigation = useNavigation(); // Initialize navigation
+  const [selectedLanguage, setSelectedLanguage] = useState('marathi'); // or 'english'
 
 
-  const initialQuestion = "आपण काय कारणासाठी भेटत आहात?";
-  const initialOptions = ["नवीन जन्मलेले बाळ", "चांगले मूल", "लसीकरण", "पाठपुरावा", "नियोजित भेट"];
-  const secondQuestion = "आपण कोणत्या कारणामुळे ग्रस्त आहात?";
-  const secondOptions = ["ताप", "खोकला", "सर्दी", "खोकला आणि सर्दी", "छाती दुखणे", "संडास लागणे"];
+  const initialQuestion = {
+    marathi: "आपण काय कारणासाठी भेटत आहात?",
+    english: "What is the reason for your visit?",
+    value: "What is the reason for your visit?"
+  };
+
+  const initialOptions = [
+    { marathi: "नवीन जन्मलेले बाळ", english: "Newborn Baby", value: "Newborn Baby" },
+    { marathi: "चांगले मूल", english: "Healthy Child", value: "Healthy Child" },
+    { marathi: "लसीकरण", english: "Vaccination", value: "Vaccination" },
+    { marathi: "पाठपुरावा", english: "Follow-up", value: "Follow-up" },
+    { marathi: "नियोजित भेट", english: "Planned Visit", value: "Planned Visit" }
+  ];
+
+  const secondQuestion = {
+    marathi: "आपण कोणत्या कारणामुळे ग्रस्त आहात?",
+    english: "What is your main complaint?",
+    value: "What is your main complaint?"
+  };
+
+  const secondOptions = [
+    { marathi: "ताप", english: "Fever", value: "fever" },
+    { marathi: "खोकला", english: "Cough", value: "cough", },
+    { marathi: "सर्दी", english: "Cold", value: "cold" },
+    { marathi: "खोकला आणि सर्दी", english: "Cough and Cold", value: "cough and cold" },
+    { marathi: "छाती दुखणे", english: "chest Pain", value: "chest Pain" },
+    { marathi: "संडास लागणे", english: "diarrhea", value: "diarrhea" }
+  ];
 
 
   const handleInitialOptionSelect = (option) => {
     setResponses((prev) => [...prev, { question: initialQuestion, answer: option }]);
+    console.log(option.value);
     setInitialQuestionAnswered(true);
   };
 
+
   const handleSecondOptionSelect = (option) => {
     setResponses((prev) => [...prev, { question: secondQuestion, answer: option }]);
+    console.log(option.value);
     setSecondQuestionAnswered(true);
 
-    const relatedQuestions = questionsData.filter(question => question.main_question === option);
+    const relatedQuestions = questionsData.filter(question => question.main_question.value === option.value);
     setFilteredQuestions(relatedQuestions);
     setCurrentQuestionIndex(0);
   };
@@ -44,6 +72,8 @@ const Questions = () => {
   const handleOptionSelect = (option) => {
     const newResponses = [...responses, { question: currentSubQuestion.sub_question, answer: option }];
     setResponses(newResponses);
+    console.log("Answer :", option.value)
+
 
     const selectedOption = currentSubQuestion.options.find(opt => typeof opt === 'object' && opt.option === option);
 
@@ -69,36 +99,38 @@ const Questions = () => {
         Alert.alert("Error", "Patient ID not found.");
         return;
       }
-  
+
       // Prepare the summary data
-      const summary = responses.map(response => response.answer).join(', ');
-  
+      const summary = responses.map(response => response.answer.value).join(', ');
+
       // Retrieve existing summaries from AsyncStorage or initialize an empty array
       const existingSummaries = await AsyncStorage.getItem('patientSummaries');
       const summariesArray = existingSummaries ? JSON.parse(existingSummaries) : [];
-  
+
       // Add the new summary entry
       summariesArray.push({
         patientId: selectedPatientId,
         summary,
         date: new Date().toISOString(), // Add a timestamp for reference
       });
-  
+
       // Store the updated array back in AsyncStorage
       await AsyncStorage.setItem('patientSummaries', JSON.stringify(summariesArray));
 
       fetchSummaries();
+      console.log('Stored Summaries after sent:', summariesArray);
 
-  
+
+
       navigation.navigate('Home');
-  
+
       Alert.alert("Success", "Summary saved successfully.");
     } catch (error) {
       Alert.alert("Error", "An error occurred while saving the summary.");
       console.error("Save summary error:", error);
     }
   };
-  
+
 
   const fetchSummaries = async () => {
     try {
@@ -114,35 +146,64 @@ const Questions = () => {
     }
   };
 
+  const toggleLanguage = () => {
+    setSelectedLanguage(prev => prev === 'marathi' ? 'english' : 'marathi');
+  };
 
+  const renderQuestion = (questionObj) => {
+    return questionObj[selectedLanguage];
+  };
+
+  const renderOption = (optionObj) => {
+    return optionObj[selectedLanguage];
+  };
+
+  // Update the initial question render:
   if (!initialQuestionAnswered) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.questionText}>{initialQuestion}</Text>
+        <TouchableOpacity
+          style={styles.languageToggle}
+          onPress={toggleLanguage}
+        >
+          <Text style={styles.languageToggleText}>
+            {selectedLanguage === 'marathi' ? 'Switch to English' : 'मराठीत बदला'}
+          </Text>
+        </TouchableOpacity>
+        <Text style={styles.questionText}>{renderQuestion(initialQuestion)}</Text>
         {initialOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
             style={styles.button}
             onPress={() => handleInitialOptionSelect(option)}
           >
-            <Text style={styles.buttonText}>{option}</Text>
+            <Text style={styles.buttonText}>{renderOption(option)}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
     );
   }
 
+  // Update the second question render:
   if (!secondQuestionAnswered) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.questionText}>{secondQuestion}</Text>
+        <TouchableOpacity
+          style={styles.languageToggle}
+          onPress={toggleLanguage}
+        >
+          <Text style={styles.languageToggleText}>
+            {selectedLanguage === 'marathi' ? 'Switch to English' : 'मराठीत बदला'}
+          </Text>
+        </TouchableOpacity>
+        <Text style={styles.questionText}>{renderQuestion(secondQuestion)}</Text>
         {secondOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
             style={styles.button}
             onPress={() => handleSecondOptionSelect(option)}
           >
-            <Text style={styles.buttonText}>{option}</Text>
+            <Text style={styles.buttonText}>{renderOption(option)}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -156,14 +217,22 @@ const Questions = () => {
   if (allQuestionsAnswered) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
+                <TouchableOpacity
+          style={styles.languageToggle}
+          onPress={toggleLanguage}
+        >
+          <Text style={styles.languageToggleText}>
+            {selectedLanguage === 'marathi' ? 'Switch to English' : 'मराठीत बदला'}
+          </Text>
+        </TouchableOpacity>
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Summary</Text>
           <Text style={styles.patientInfo}>पेशंटचे नाव : <Text style={styles.highlight}>{patientName}</Text></Text>
           <Text style={styles.patientInfo}>पेशंटचे वय : <Text style={styles.highlight}>{patientAge}</Text></Text>
           {responses.map((response, index) => (
             <View key={index} style={styles.responseContainer}>
-              <Text style={styles.questionTextBold}>{`${response.question}:`}</Text>
-              <Text style={styles.answerText}>{response.answer}</Text>
+              <Text style={styles.questionTextBold}>{`${renderQuestion(response.question)}:`}</Text>
+              <Text style={styles.answerText}>{renderOption(response.answer)}</Text>
             </View>
           ))}
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -176,14 +245,16 @@ const Questions = () => {
 
   const renderCurrentSubQuestion = () => (
     <View style={styles.questionCard}>
-      <Text style={styles.subQuestionText}>{currentSubQuestion.sub_question}</Text>
+      <Text style={styles.subQuestionText}>
+        {renderQuestion(currentSubQuestion.sub_question)}
+      </Text>
       {currentSubQuestion.options.map((option, index) => (
         <TouchableOpacity
           key={index}
           style={styles.button}
-          onPress={() => handleOptionSelect(typeof option === 'string' ? option : option.option)}
+          onPress={() => handleOptionSelect(option)}
         >
-          <Text style={styles.buttonText}>{typeof option === 'string' ? option : option.option}</Text>
+          <Text style={styles.buttonText}>{renderOption(option)}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -191,32 +262,47 @@ const Questions = () => {
 
   const renderRelatedQuestions = () => {
     const relatedQuestion = relatedQuestions[relatedQuestionIndex];
-
     if (!relatedQuestion) return null;
-
     return (
-      <View style={styles.questionCard}>
-        <Text style={styles.subQuestionText}>{relatedQuestion.related_question}</Text>
-        {relatedQuestion.related_options.map((option, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.button}
-            onPress={() => {
-              const newResponses = [...responses, { question: relatedQuestion.related_question, answer: option }];
-              setResponses(newResponses);
-              setRelatedQuestionIndex(prev => prev + 1);
-            }}
-          >
-            <Text style={styles.buttonText}>{option}</Text>
-          </TouchableOpacity>
-        ))}
+      <View>
+        <View style={styles.questionCard}>
+          <Text style={styles.subQuestionText}>
+            {renderQuestion(relatedQuestion(relatedQuestion.related_question))}
+          </Text>
+          {relatedQuestion.related_options.map((option, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.button}
+              onPress={() => {
+                const newResponses = [...responses, {
+                  question: relatedQuestion.related_question.value,
+                  answer: option.value
+                },
+                console.log("Answer for related questions :", option.value)
+                ];
+                setResponses(newResponses);
+                setRelatedQuestionIndex(prev => prev + 1);
+              }}
+            >
+              <Text style={styles.buttonText}>{renderOption(option)}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.questionText}>{currentQuestion.main_question}</Text>
+              <TouchableOpacity
+          style={styles.languageToggle}
+          onPress={toggleLanguage}
+        >
+          <Text style={styles.languageToggleText}>
+            {selectedLanguage === 'marathi' ? 'Switch to English' : 'मराठीत बदला'}
+          </Text>
+        </TouchableOpacity>
+      <Text style={styles.questionText}>{renderQuestion(currentQuestion.main_question)}</Text>
       {relatedQuestions.length > 0 ? renderRelatedQuestions() : renderCurrentSubQuestion()}
     </ScrollView>
   );
@@ -308,6 +394,18 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     width: '100%',
     alignItems: 'center',
+  },
+  languageToggle: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#004D40',
+    padding: 10,
+    borderRadius: 5,
+  },
+  languageToggleText: {
+    color: '#FFFFFF',
+    fontSize: 14,
   },
 });
 

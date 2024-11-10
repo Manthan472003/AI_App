@@ -46,6 +46,7 @@ const Home = () => {
                 age: selectedPatient.age,
             });
         }
+
     };
 
     return (
