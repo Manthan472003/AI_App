@@ -3,13 +3,15 @@ import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Alert } from 'rea
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import questionsData from './relatedQuestions.json';
+import { getAllQuestions } from '../Services/QuestionServices';
+import { saveSummary, getAllSummaries } from '../Services/SummaryServices';
 
 
 const Questions = () => {
   const route = useRoute();
   const { name: patientName, age: patientAge } = route.params;
 
+  const [questionsData, setQuestionsData] = useState([]);
   const [initialQuestionAnswered, setInitialQuestionAnswered] = useState(false);
   const [secondQuestionAnswered, setSecondQuestionAnswered] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -50,6 +52,16 @@ const Questions = () => {
     { marathi: "छाती दुखणे", english: "chest Pain", value: "chest Pain" },
     { marathi: "संडास लागणे", english: "diarrhea", value: "diarrhea" }
   ];
+
+  
+  const fetchQuestions = useCallback(async () => {
+    const response = await getAllQuestions();
+    setQuestionsData(response.data);
+  }, []);
+
+  useEffect(() => {
+    fetchQuestions();
+  }, [fetchQuestions]);
 
 
   const handleInitialOptionSelect = (option) => {
@@ -100,28 +112,12 @@ const Questions = () => {
         return;
       }
 
-      // Prepare the summary data
       const summary = responses.map(response => response.answer.value).join(', ');
-
-      // Retrieve existing summaries from AsyncStorage or initialize an empty array
-      const existingSummaries = await AsyncStorage.getItem('patientSummaries');
-      const summariesArray = existingSummaries ? JSON.parse(existingSummaries) : [];
-
-      // Add the new summary entry
-      summariesArray.push({
+      await saveSummary({
+        date: new Date().toISOString(), // Add a timestamp for reference
         patientId: selectedPatientId,
         summary,
-        date: new Date().toISOString(), // Add a timestamp for reference
       });
-
-      // Store the updated array back in AsyncStorage
-      await AsyncStorage.setItem('patientSummaries', JSON.stringify(summariesArray));
-
-      fetchSummaries();
-      console.log('Stored Summaries after sent:', summariesArray);
-
-
-
       navigation.navigate('Home');
 
       Alert.alert("Success", "Summary saved successfully.");
@@ -132,19 +128,6 @@ const Questions = () => {
   };
 
 
-  const fetchSummaries = async () => {
-    try {
-      const storedSummaries = await AsyncStorage.getItem('patientSummaries');
-      if (storedSummaries) {
-        const summariesArray = JSON.parse(storedSummaries);
-        console.log('Stored Summaries:', summariesArray);
-      } else {
-        console.log('No summaries found');
-      }
-    } catch (error) {
-      console.error('Error fetching summaries:', error);
-    }
-  };
 
   const toggleLanguage = () => {
     setSelectedLanguage(prev => prev === 'marathi' ? 'english' : 'marathi');

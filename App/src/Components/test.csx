@@ -37,8 +37,9 @@ const Questions = () => {
       const fetchQuestions = useCallback(async () => {
             const response = await getAllQuestions();
             setQuestionsData(response.data); // Assuming response.data is the array of sections
+            console.log(questionsData);
 
-    }, []); // Include toast in the dependency array
+    }, []);
 
     useEffect(() => {
         fetchQuestions();

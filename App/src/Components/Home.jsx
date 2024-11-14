@@ -4,6 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import patientsData from './patients.json';
 import { useNavigation } from '@react-navigation/native';
+import { getAllSummaries } from '../Services/SummaryServices';
 
 const Home = () => {
     const [selectedPatient, setSelectedPatient] = useState(null);
@@ -23,8 +24,12 @@ const Home = () => {
 
     const fetchPatientSummaries = async (patientId) => {
         try {
-            const storedSummaries = await AsyncStorage.getItem('patientSummaries');
+            const response = await getAllSummaries();
+            const storedSummaries = response.data;
+
+            // console.log("storedSummaries :", response.data);
             const summariesArray = storedSummaries ? JSON.parse(storedSummaries) : [];
+            // console.log(summariesArray);
             const filteredSummaries = summariesArray.filter(summary => summary.patientId === patientId);
             setPatientSummaries(filteredSummaries);
         } catch (error) {

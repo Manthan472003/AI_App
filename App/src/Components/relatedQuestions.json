@@ -97,11 +97,9 @@
         },
         "options": [
           {
-            "options": {
-              "marathi": "उलटी होणे",
-              "english": "vomiting",
-              "value": "vomiting"
-            },
+            "marathi": "उलटी होणे",
+            "english": "vomiting",
+            "value": "vomiting",
             "related_questions": [
               {
                 "related_question": {
@@ -159,11 +157,9 @@
             ]
           },
           {
-            "options": {
-              "marathi": "पुरळ येणे",
-              "english": "rash",
-              "value": "rash"
-            },
+            "marathi": "पुरळ येणे",
+            "english": "rash",
+            "value": "rash",
             "related_questions": [
               {
                 "related_question": {
@@ -226,11 +222,9 @@
             ]
           },
           {
-            "options": {
-              "marathi": "पोटदुखी",
-              "english": "abdominal pain",
-              "value": "abdominal pain"
-            },
+            "marathi": "पोटदुखी",
+            "english": "abdominal pain",
+            "value": "abdominal pain",
             "related_questions": [
               {
                 "related_question": {
@@ -278,11 +272,9 @@
             ]
           },
           {
-            "options": {
-              "marathi": "डोकेदुखी",
-              "english": "headache",
-              "value": "headache"
-            },
+            "marathi": "डोकेदुखी",
+            "english": "headache",
+            "value": "headache",
             "related_questions": [
               {
                 "related_question": {
