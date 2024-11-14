@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import patientsData from './patients.json';
 import { useNavigation } from '@react-navigation/native';
 import { getAllSummaries } from '../Services/SummaryServices';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Assuming you are using this icon package
 
 const Home = () => {
     const [selectedPatient, setSelectedPatient] = useState(null);
@@ -12,12 +13,14 @@ const Home = () => {
     const [patientSummaries, setPatientSummaries] = useState([]);
     const navigation = useNavigation();
 
+    // Load patients data from patients.json
     useEffect(() => {
         setPatients(patientsData);
     }, []);
 
+    // Fetch patient summaries whenever a patient is selected
     useEffect(() => {
-        if (selectedPatient) {
+        if (selectedPatient && selectedPatient.id) {
             fetchPatientSummaries(selectedPatient.id);
         }
     }, [selectedPatient]);
@@ -26,22 +29,31 @@ const Home = () => {
         try {
             const response = await getAllSummaries();
             const storedSummaries = response.data;
-
-            // console.log("storedSummaries :", response.data);
-            const summariesArray = storedSummaries ? JSON.parse(storedSummaries) : [];
-            // console.log(summariesArray);
-            const filteredSummaries = summariesArray.filter(summary => summary.patientId === patientId);
-            setPatientSummaries(filteredSummaries);
+    
+            if (Array.isArray(storedSummaries)) {
+                const filteredSummaries = storedSummaries.filter(entry => String(entry.patientId) === String(patientId));
+    
+                setPatientSummaries(filteredSummaries);
+            } else {
+                console.error("Error: Summaries data is not an array.");
+            }
         } catch (error) {
             console.error('Error fetching summaries:', error);
         }
     };
-
+    
     const handlePatientChange = (value) => {
         const patient = patients.find(p => p.id === value);
         setSelectedPatient(patient);
     };
+    
+    useEffect(() => {
+        if (selectedPatient && selectedPatient.id) {
+            fetchPatientSummaries(selectedPatient.id);
+        }
+    }, [selectedPatient]);
 
+    // Navigate to the 'Questions' screen when the 'Start' button is pressed
     const handleStartPress = async () => {
         if (selectedPatient) {
             await AsyncStorage.setItem('selectedPatientId', selectedPatient.id);
@@ -51,7 +63,6 @@ const Home = () => {
                 age: selectedPatient.age,
             });
         }
-
     };
 
     return (
@@ -83,8 +94,8 @@ const Home = () => {
                 <Text style={styles.startButtonText}>Start</Text>
             </TouchableOpacity>
 
-            {/* Patient Summaries */}
-            {patientSummaries.length > 0 && (
+            {/* Display patient summaries if available */}
+            {patientSummaries.length > 0 ? (
                 <View style={styles.summaryContainer}>
                     <Text style={styles.summaryTitle}>Patient Summary</Text>
                     {patientSummaries.map((summary, index) => (
@@ -101,6 +112,13 @@ const Home = () => {
                         </View>
                     ))}
                 </View>
+            ) : (
+                selectedPatient && (
+                    <View style={styles.noSummariesContainer}>
+                        <Icon name="error-outline" size={50} color="#FF5722" />
+                        <Text style={styles.noSummariesText}>No summaries available for this patient.</Text>
+                    </View>
+                )
             )}
         </ScrollView>
     );
@@ -234,6 +252,27 @@ const styles = StyleSheet.create({
         color: '#3F51B5',
         fontSize: 14,
         fontWeight: '500',
+    },
+    noSummariesContainer: {
+        marginTop: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFEBEE',
+        borderRadius: 10,
+        padding: 20,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    noSummariesText: {
+        fontSize: 16,
+        color: '#FF5722',
+        fontWeight: 'bold',
+        marginTop: 10,
+        textAlign: 'center',
     },
 });
 
